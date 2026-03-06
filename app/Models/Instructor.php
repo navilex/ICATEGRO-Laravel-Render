@@ -78,4 +78,11 @@ class Instructor extends Model
     {
         return $this->hasMany(InstructorCurso::class);
     }
+
+    public function grupos()
+    {
+        return $this->belongsToMany(Grupo::class, 'grupo_instructor')
+            ->withPivot(['tipo', 'fecha_inicio', 'fecha_termino', 'duracion_dias', 'duracion_horas', 'horario', 'pago_instructor', 'fecha_pago', 'tipo_pago'])
+            ->withTimestamps();
+    }
 }

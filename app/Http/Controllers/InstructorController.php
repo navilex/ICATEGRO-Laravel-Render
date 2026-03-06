@@ -251,7 +251,44 @@ class InstructorController extends Controller
         if (!$instructor->$field) {
             abort(404, 'File not found');
         }
+        /** @var \Illuminate\Filesystem\FilesystemAdapter $disk */
+        $disk = \Illuminate\Support\Facades\Storage::disk('public');
 
-        return \Illuminate\Support\Facades\Storage::disk('public')->download($instructor->$field);
+        return $disk->download($instructor->$field);
+    }
+
+    public function search(Request $request)
+    {
+        $query = \App\Models\Instructor::query();
+
+        if ($request->filled('id')) {
+            $query->where('id', $request->id);
+        }
+
+        if ($request->filled('curp')) {
+            $query->where('curp', 'like', '%' . $request->curp . '%');
+        }
+
+        if ($request->filled('nombre')) {
+            $query->where('nombre', 'like', '%' . $request->nombre . '%');
+        }
+
+        if ($request->filled('apellido_1')) {
+            $query->where('apellido_1', 'like', '%' . $request->apellido_1 . '%');
+        }
+
+        if ($request->filled('apellido_2')) {
+            $query->where('apellido_2', 'like', '%' . $request->apellido_2 . '%');
+        }
+
+        $instructores = $query->limit(50)->get([
+            'id',
+            'nombre',
+            'apellido_1',
+            'apellido_2',
+            'curp'
+        ]);
+
+        return response()->json($instructores);
     }
 }

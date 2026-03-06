@@ -39,13 +39,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/convenios', [\App\Http\Controllers\ConvenioController::class, 'index'])->name('convenios.index');
     Route::get('/convenios/create', [\App\Http\Controllers\ConvenioController::class, 'create'])->name('convenios.create');
     Route::post('/convenios', [\App\Http\Controllers\ConvenioController::class, 'store'])->name('convenios.store');
+    Route::get('/api/convenios/search', [\App\Http\Controllers\ConvenioController::class, 'search'])->name('api.convenios.search');
     // Instructores Routes
     Route::get('/instructores', [\App\Http\Controllers\InstructorController::class, 'index'])->name('instructores.index');
     Route::get('/instructores/create', [\App\Http\Controllers\InstructorController::class, 'create'])->name('instructores.create');
     Route::post('/instructores', [\App\Http\Controllers\InstructorController::class, 'store'])->name('instructores.store');
     Route::get('/instructores/check-curp/{curp}', [\App\Http\Controllers\InstructorController::class, 'checkCurp'])->name('instructores.check-curp');
-    Route::get('/instructores/{instructor}', [\App\Http\Controllers\InstructorController::class, 'show'])->name('instructores.show');
     Route::get('/instructores/{instructor}/download/{type}', [\App\Http\Controllers\InstructorController::class, 'download'])->name('instructores.download');
+    Route::get('/api/instructores/search', [\App\Http\Controllers\InstructorController::class, 'search'])->name('api.instructores.search');
 
     // Users Routes
     Route::get('/users', [\App\Http\Controllers\UserController::class, 'index'])->name('users.index');
@@ -82,6 +83,13 @@ Route::middleware('auth')->group(function () {
     // Planteles Routes
     Route::get('/planteles', [\App\Http\Controllers\PlantelController::class, 'index'])->name('planteles.index');
     Route::post('/planteles', [\App\Http\Controllers\PlantelController::class, 'store'])->name('planteles.store');
+
+    // Grupos Routes
+    Route::get('/grupos/create', [\App\Http\Controllers\GrupoController::class, 'create'])->name('grupos.create');
+    Route::post('/grupos', [\App\Http\Controllers\GrupoController::class, 'store'])->name('grupos.store');
+    Route::get('/api/grupos/campos-formacion/{ofertaId}', [\App\Http\Controllers\GrupoController::class, 'getCamposFormacion']);
+    Route::get('/api/grupos/especialidades/{campoId}', [\App\Http\Controllers\GrupoController::class, 'getEspecialidades']);
+    Route::get('/api/grupos/cursos/{especialidadId}/{tipo}', [\App\Http\Controllers\GrupoController::class, 'getCursos']);
 
     // Consultar Planteles Routes
     Route::get('/consulta-planteles', [\App\Http\Controllers\ConsultaPlantelController::class, 'index'])->name('consulta-planteles.index');

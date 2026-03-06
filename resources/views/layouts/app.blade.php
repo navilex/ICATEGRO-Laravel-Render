@@ -20,11 +20,11 @@
 
     <!-- Unified Menu Bar -->
     <nav class="bg-red-800 text-white shadow-lg relative z-50">
-        <div class="container mx-auto px-4 py-2">
-            <div class="flex flex-wrap items-center justify-between gap-4">
+        <div class="w-full px-2 md:px-4 py-2 relative">
+            <div class="flex flex-nowrap items-center justify-between gap-2">
 
                 <!-- Left: User Info -->
-                <div class="flex items-center space-x-2 whitespace-nowrap">
+                <div class="flex items-center space-x-2 whitespace-nowrap min-w-max">
                     <i class="fas fa-user-circle text-2xl"></i>
                     <div class="flex flex-col leading-tight">
                         <span class="font-bold text-sm uppercase">{{ Auth::user()->name }}</span>
@@ -33,92 +33,109 @@
                 </div>
 
                 <!-- Center: Navigation Links -->
-                <div class="flex flex-wrap items-center justify-center gap-2 flex-grow">
+                <div class="flex flex-nowrap items-center justify-center gap-1 flex-grow hide-scrollbar">
                     <a href="{{ route('dashboard') }}"
-                        class="px-3 py-2 text-sm font-bold rounded hover:bg-red-700 transition">Principal</a>
+                        class="px-2 py-2 text-sm font-bold rounded hover:bg-red-700 transition whitespace-nowrap">Principal</a>
 
                     <!-- Alumnos Dropdown -->
                     <div class="relative group">
                         <button
-                            class="px-3 py-2 text-sm font-bold rounded hover:bg-red-700 transition flex items-center focus:outline-none">
+                            class="px-2 py-2 text-sm font-bold rounded hover:bg-red-700 transition flex items-center focus:outline-none whitespace-nowrap">
                             Alumnos <i class="fas fa-caret-down ml-1 text-xs"></i>
                         </button>
                         <div
                             class="absolute left-0 mt-1 w-48 bg-white rounded shadow-lg hidden group-hover:block z-50 border border-gray-200">
                             <a href="{{ route('students.create') }}"
-                                class="block px-4 py-2 text-sm text-gray-800 hover:bg-red-50 hover:text-red-700 font-semibold transition">Registrar
+                                class="block px-4 py-2 text-sm text-gray-800 hover:bg-red-800 hover:text-white font-semibold transition">Registrar
                                 alumno</a>
                             <a href="{{ route('students.index') }}"
-                                class="block px-4 py-2 text-sm text-gray-800 hover:bg-red-50 hover:text-red-700 font-semibold transition">Lista
+                                class="block px-4 py-2 text-sm text-gray-800 hover:bg-red-800 hover:text-white font-semibold transition">Lista
                                 de alumnos</a>
                         </div>
                     </div>
 
-                    <a href="#" class="px-3 py-2 text-sm font-bold rounded hover:bg-red-700 transition">Grupos</a>
                     <div class="relative group">
                         <button
-                            class="px-3 py-2 text-sm font-bold rounded hover:bg-red-700 transition flex items-center focus:outline-none">
-                            Empresas <i class="fas fa-caret-down ml-1 text-xs"></i>
+                            class="px-2 py-2 text-sm font-bold rounded hover:bg-red-700 transition flex items-center focus:outline-none whitespace-nowrap">
+                            Grupos <i class="fas fa-caret-down ml-1 text-xs"></i>
+                        </button>
+                        <div
+                            class="absolute left-0 mt-1 w-48 bg-white rounded shadow-lg hidden group-hover:block z-50 border border-gray-200 overflow-hidden">
+                            <a href="{{ route('grupos.create') }}"
+                                class="block px-4 py-2 text-sm text-gray-800 hover:bg-red-800 hover:text-white font-semibold transition">Registrar
+                                grupo</a>
+                            <a href="#"
+                                class="block px-4 py-2 text-sm text-gray-800 hover:bg-red-800 hover:text-white font-semibold transition">Lista
+                                de grupos</a>
+                        </div>
+                    </div>
+
+                    <div class="relative group">
+                        <button
+                            class="px-2 py-2 text-sm font-bold rounded hover:bg-red-700 transition flex items-center focus:outline-none whitespace-nowrap">
+                            Empresas / Instituciones <i class="fas fa-caret-down ml-1 text-xs"></i>
                         </button>
                         <div
                             class="absolute left-0 mt-1 w-48 bg-white rounded shadow-lg hidden group-hover:block z-50 border border-gray-200">
                             <a href="{{ route('companies.create') }}"
-                                class="block px-4 py-2 text-sm text-gray-800 hover:bg-red-50 hover:text-red-700 font-semibold transition">Registrar
+                                class="block px-4 py-2 text-sm text-gray-800 hover:bg-red-800 hover:text-white font-semibold transition">Registrar
                                 empresa/Institución</a>
                             <a href="{{ route('companies.index') }}"
-                                class="block px-4 py-2 text-sm text-gray-800 hover:bg-red-50 hover:text-red-700 font-semibold transition">Lista
+                                class="block px-4 py-2 text-sm text-gray-800 hover:bg-red-800 hover:text-white font-semibold transition">Lista
                                 de empresas/Instituciones</a>
                         </div>
                     </div>
+
                     <div class="relative group">
                         <button
-                            class="px-3 py-2 text-sm font-bold rounded hover:bg-red-700 transition flex items-center focus:outline-none">
+                            class="px-2 py-2 text-sm font-bold rounded hover:bg-red-700 transition flex items-center focus:outline-none whitespace-nowrap">
                             Instructores <i class="fas fa-caret-down ml-1 text-xs"></i>
                         </button>
                         <div
                             class="absolute left-0 mt-1 w-48 bg-white rounded shadow-lg hidden group-hover:block z-50 border border-gray-200">
                             <a href="{{ route('instructores.create') }}"
-                                class="block px-4 py-2 text-sm text-gray-800 hover:bg-red-50 hover:text-red-700 font-semibold transition">Registrar
+                                class="block px-4 py-2 text-sm text-gray-800 hover:bg-red-800 hover:text-white font-semibold transition">Registrar
                                 instructor</a>
                             <a href="{{ route('instructores.index') }}"
-                                class="block px-4 py-2 text-sm text-gray-800 hover:bg-red-50 hover:text-red-700 font-semibold transition">Lista
+                                class="block px-4 py-2 text-sm text-gray-800 hover:bg-red-800 hover:text-white font-semibold transition">Lista
                                 de instructores</a>
                         </div>
                     </div>
                     <div class="relative group">
                         <button type="button"
-                            class="px-3 py-2 text-sm font-bold rounded hover:bg-red-700 transition flex items-center focus:outline-none">
+                            class="px-2 py-2 text-sm font-bold rounded hover:bg-red-700 transition flex items-center focus:outline-none whitespace-nowrap">
                             Convenios <i class="fas fa-caret-down ml-1 text-xs"></i>
                         </button>
                         <div
                             class="absolute left-0 mt-1 w-48 bg-white rounded shadow-lg hidden group-hover:block z-50 border border-gray-200">
                             <a href="{{ route('convenios.create') }}"
-                                class="block px-4 py-2 text-sm text-gray-800 hover:bg-red-50 hover:text-red-700 font-semibold transition">Registrar
+                                class="block px-4 py-2 text-sm text-gray-800 hover:bg-red-800 hover:text-white font-semibold transition">Registrar
                                 Convenio</a>
                             <a href="{{ route('convenios.index') }}"
-                                class="block px-4 py-2 text-sm text-gray-800 hover:bg-red-50 hover:text-red-700 font-semibold transition">Lista
+                                class="block px-4 py-2 text-sm text-gray-800 hover:bg-red-800 hover:text-white font-semibold transition">Lista
                                 de convenios</a>
                         </div>
                     </div>
                     <div class="relative group">
                         <button type="button"
-                            class="px-3 py-2 text-sm font-bold rounded hover:bg-red-700 transition flex items-center focus:outline-none">
+                            class="px-2 py-2 text-sm font-bold rounded hover:bg-red-700 transition flex items-center focus:outline-none whitespace-nowrap">
                             Usuarios <i class="fas fa-caret-down ml-1 text-xs"></i>
                         </button>
                         <div
                             class="absolute left-0 mt-1 w-48 bg-white rounded shadow-lg hidden group-hover:block z-50 border border-gray-200">
                             <a href="{{ route('users.create') }}"
-                                class="block px-4 py-2 text-sm text-gray-800 hover:bg-red-50 hover:text-red-700 font-semibold transition border-b border-gray-100">Registrar
+                                class="block px-4 py-2 text-sm text-gray-800 hover:bg-red-800 hover:text-white font-semibold transition border-b border-gray-100">Registrar
                                 usuario</a>
                             <a href="{{ route('users.index') }}"
-                                class="block px-4 py-2 text-sm text-gray-800 hover:bg-red-50 hover:text-red-700 font-semibold transition">Listado
+                                class="block px-4 py-2 text-sm text-gray-800 hover:bg-red-800 hover:text-white font-semibold transition">Listado
                                 de usuarios</a>
                         </div>
                     </div>
-                    <a href="#" class="px-3 py-2 text-sm font-bold rounded hover:bg-red-700 transition">Reportes</a>
+                    <a href="#"
+                        class="px-2 py-2 text-sm font-bold rounded hover:bg-red-700 transition whitespace-nowrap">Reportes</a>
                     <div class="relative group">
                         <button type="button"
-                            class="px-3 py-2 text-sm font-bold rounded hover:bg-red-700 transition flex items-center focus:outline-none">
+                            class="px-2 py-2 text-sm font-bold rounded hover:bg-red-700 transition flex items-center focus:outline-none whitespace-nowrap">
                             Catálogos <i class="fas fa-caret-down ml-1 text-xs"></i>
                         </button>
                         <div
@@ -129,22 +146,22 @@
                                 Oferta educativa
                             </div>
                             <a href="{{ route('ofertas-educativas.index') }}"
-                                class="block px-6 py-2 text-sm text-gray-800 hover:bg-red-50 hover:text-red-700 font-semibold transition border-b border-gray-100">Registrar
+                                class="block px-6 py-2 text-sm text-gray-800 hover:bg-red-800 hover:text-white font-semibold transition border-b border-gray-100">Registrar
                                 nueva Oferta Educativa</a>
                             <a href="{{ route('campos-formacion.index') }}"
-                                class="block px-6 py-2 text-sm text-gray-800 hover:bg-red-50 hover:text-red-700 font-semibold transition border-b border-gray-100">Registrar
+                                class="block px-6 py-2 text-sm text-gray-800 hover:bg-red-800 hover:text-white font-semibold transition border-b border-gray-100">Registrar
                                 Campos de Formación Profesional</a>
                             <a href="{{ route('especialidades-ocupacionales.index') }}"
-                                class="block px-6 py-2 text-sm text-gray-800 hover:bg-red-50 hover:text-red-700 font-semibold transition border-b border-gray-100">Registrar
+                                class="block px-6 py-2 text-sm text-gray-800 hover:bg-red-800 hover:text-white font-semibold transition border-b border-gray-100">Registrar
                                 Especialidades Ocupacionales</a>
                             <a href="{{ route('cursos.index') }}"
-                                class="block px-6 py-2 text-sm text-gray-800 hover:bg-red-50 hover:text-red-700 font-semibold transition border-b border-gray-100">Registrar
+                                class="block px-6 py-2 text-sm text-gray-800 hover:bg-red-800 hover:text-white font-semibold transition border-b border-gray-100">Registrar
                                 Cursos</a>
                             <a href="{{ route('cursos-icategro.index') }}"
-                                class="block px-6 py-2 text-sm text-gray-800 hover:bg-red-50 hover:text-red-700 font-semibold transition border-b border-gray-100">Registrar
+                                class="block px-6 py-2 text-sm text-gray-800 hover:bg-red-800 hover:text-white font-semibold transition border-b border-gray-100">Registrar
                                 Cursos - ICATEGRO</a>
                             <a href="{{ route('consulta-oferta.index') }}"
-                                class="block px-6 py-2 text-sm text-gray-800 hover:bg-red-50 hover:text-red-700 font-semibold transition border-b border-gray-200">Consultar
+                                class="block px-6 py-2 text-sm text-gray-800 hover:bg-red-800 hover:text-white font-semibold transition border-b border-gray-200">Consultar
                                 Oferta Educativa</a>
 
                             <!-- Planteles -->
@@ -152,10 +169,10 @@
                                 Planteles
                             </div>
                             <a href="{{ route('planteles.index') }}"
-                                class="block px-6 py-2 text-sm text-gray-800 hover:bg-red-50 hover:text-red-700 font-semibold transition border-b border-gray-100">Registrar
+                                class="block px-6 py-2 text-sm text-gray-800 hover:bg-red-800 hover:text-white font-semibold transition border-b border-gray-100">Registrar
                                 Plantel</a>
                             <a href="{{ route('consulta-planteles.index') }}"
-                                class="block px-6 py-2 text-sm text-gray-800 hover:bg-red-50 hover:text-red-700 font-semibold transition">Consultar
+                                class="block px-6 py-2 text-sm text-gray-800 hover:bg-red-800 hover:text-white font-semibold transition">Consultar
                                 Planteles</a>
                         </div>
                     </div>

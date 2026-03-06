@@ -80,4 +80,45 @@ class ConvenioController extends Controller
 
         return redirect()->route('dashboard')->with('success', 'Convenio registrado correctamente.');
     }
+
+    public function search(Request $request)
+    {
+        $query = Convenio::query();
+
+        if ($request->filled('tipo')) {
+            $query->where('type', 'like', '%' . $request->tipo . '%');
+        }
+
+        if ($request->filled('numero')) {
+            $query->where('number', 'like', '%' . $request->numero . '%');
+        }
+
+        if ($request->filled('nombre')) {
+            $query->where('name', 'like', '%' . $request->nombre . '%');
+        }
+
+        $user = \Illuminate\Support\Facades\Auth::user();
+
+        // If the user's adscription is not empty and they are not DG, we need to filter by their unit
+        if ($user && $user->adscription && str_contains($user->adscription, 'UNIDAD DE CAPACITACION')) {
+            $plantelDesc = str_replace('UNIDAD DE CAPACITACION', '', $user->adscription);
+            $query->whereHas('planteles', function ($q) use ($plantelDesc) {
+                $q->where('name', 'like', '%' . trim($plantelDesc) . '%');
+            });
+        } elseif ($user && $user->adscription && str_contains($user->adscription, 'UNIDAD CAPACITACION')) {
+            $plantelDesc = str_replace('UNIDAD CAPACITACION', '', $user->adscription);
+            $query->whereHas('planteles', function ($q) use ($plantelDesc) {
+                $q->where('name', 'like', '%' . trim($plantelDesc) . '%');
+            });
+        } elseif ($user && $user->adscription && str_contains($user->adscription, 'ACCION MOVIL')) {
+            $plantelDesc = str_replace('ACCION MOVIL', '', $user->adscription);
+            $query->whereHas('planteles', function ($q) use ($plantelDesc) {
+                $q->where('name', 'like', '%' . trim($plantelDesc) . '%');
+            });
+        }
+
+        $convenios = $query->limit(50)->get(['id', 'number', 'name']);
+
+        return response()->json($convenios);
+    }
 }

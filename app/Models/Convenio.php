@@ -32,4 +32,9 @@ class Convenio extends Model
     {
         return $this->belongsToMany(Company::class);
     }
+
+    public function grupos()
+    {
+        return $this->belongsToMany(Grupo::class);
+    }
 }
