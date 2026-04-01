@@ -164,7 +164,7 @@ class GrupoController extends Controller
     {
         $ofertas = OfertaEducativa::all();
         $sedes = Plantel::all();
-        $grupo->load(['calendarios', 'plantel.user', 'curso', 'cursoIcategro', 'ofertaEducativa', 'campoFormacion', 'especialidadOcupacional']);
+        $grupo->load(['calendarios', 'plantel.user', 'curso', 'cursoIcategro', 'ofertaEducativa', 'campoFormacion', 'especialidadOcupacional', 'convenios', 'instructores']);
 
         return view('grupos.edit', compact('grupo', 'ofertas', 'sedes'));
     }
@@ -194,8 +194,33 @@ class GrupoController extends Controller
             'municipio' => 'required|string|max:255',
             'localidad' => 'required|string|max:255',
             'nombre_espacio' => 'required|string|max:255',
-            'calendario_data' => 'required|string'
+            'calendario_data' => 'required|string',
+            'convenios_data' => 'nullable|string',
+            'instructores_data' => 'nullable|string',
+            'tipo_pago_grupo' => 'required|string',
+            'costo_por_persona' => 'nullable|numeric|min:0',
+            'costo_por_grupo' => 'nullable|numeric|min:0',
+            'costo_coffee_break' => 'nullable|numeric|min:0',
+            'ingreso_total' => 'nullable|numeric',
+            'utilidad_grupo' => 'nullable|numeric',
+            'archivo_plan_estudios' => 'nullable|file|mimes:xls,xlsx|max:8192',
+            'archivo_becas' => 'nullable|file|mimes:pdf|max:8192',
+            'comentarios' => 'nullable|string|max:200'
         ]);
+
+        if ($request->hasFile('archivo_plan_estudios')) {
+            if ($grupo->archivo_plan_estudios) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($grupo->archivo_plan_estudios);
+            }
+            $validated['archivo_plan_estudios'] = $request->file('archivo_plan_estudios')->store('grupos/archivos', 'public');
+        }
+
+        if ($request->hasFile('archivo_becas')) {
+            if ($grupo->archivo_becas) {
+                \Illuminate\Support\Facades\Storage::disk('public')->delete($grupo->archivo_becas);
+            }
+            $validated['archivo_becas'] = $request->file('archivo_becas')->store('grupos/archivos', 'public');
+        }
 
         $calendarios = json_decode($request->calendario_data, true);
         if (!$calendarios || count($calendarios) === 0) {
@@ -216,6 +241,39 @@ class GrupoController extends Controller
                 'total_dias' => $cal['total_dias'],
                 'total_horas' => $cal['total_horas'],
             ]);
+        }
+
+        if ($request->filled('convenios_data')) {
+            $convenios = json_decode($request->convenios_data, true);
+            if (is_array($convenios)) {
+                $grupo->convenios()->sync($convenios);
+            }
+        } else {
+            $grupo->convenios()->sync([]);
+        }
+
+        if ($request->filled('instructores_data')) {
+            $instructores = json_decode($request->instructores_data, true);
+            if (is_array($instructores)) {
+                $syncData = [];
+                foreach ($instructores as $inst) {
+                    $id = $inst['instructor_id'] ?? $inst['id'];
+                    $syncData[$id] = [
+                        'tipo' => $inst['tipo'],
+                        'fecha_inicio' => $inst['fecha_inicio'],
+                        'fecha_termino' => $inst['fecha_termino'],
+                        'duracion_dias' => $inst['duracion_dias'],
+                        'duracion_horas' => $inst['duracion_horas'],
+                        'horario' => $inst['horario'],
+                        'pago_instructor' => !empty($inst['pago_instructor']) ? $inst['pago_instructor'] : null,
+                        'fecha_pago' => !empty($inst['fecha_pago']) ? $inst['fecha_pago'] : null,
+                        'tipo_pago' => !empty($inst['tipo_pago']) ? $inst['tipo_pago'] : null,
+                    ];
+                }
+                $grupo->instructores()->sync($syncData);
+            }
+        } else {
+            $grupo->instructores()->sync([]);
         }
 
         return redirect()->route('grupos.index')->with('success', 'Grupo modificado exitosamente.');

@@ -41,7 +41,9 @@ class Grupo extends Model
         'utilidad_grupo',
         'archivo_plan_estudios',
         'archivo_becas',
-        'comentarios'
+        'comentarios',
+        'autorizado_por',
+        'fecha_autorizacion'
     ];
 
     public function ofertaEducativa()
