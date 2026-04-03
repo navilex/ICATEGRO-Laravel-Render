@@ -13,13 +13,22 @@ class ListaCursoAlumno extends Model
         'group_status',
         'plantel',
         'group_id',
+        'grupos_vulnerables',
+        'discapacidades',
+        'escolaridad',
         'name',
         'start_date',
         'end_date',
         'student_status',
-        'grade',
+        'calificacion',
         'doc_type',
         'folio',
+        'folio_motivo_cambio',
+    ];
+
+    protected $casts = [
+        'grupos_vulnerables' => 'array',
+        'discapacidades' => 'array',
     ];
 
     public function student()

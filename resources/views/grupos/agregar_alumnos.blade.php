@@ -180,9 +180,9 @@
                                 <td class="py-3 px-2 uppercase">{{ $alumno->lastname1 }}</td>
                                 <td class="py-3 px-2 uppercase">{{ $alumno->lastname2 }}</td>
                                 <td class="py-3 px-2">{{ $alumno->edad }}</td>
-                                <td class="py-3 px-2 uppercase">{{ $alumno->grupos_vulnerables ?? '• PERSONAS JÓVENES' }}</td>
-                                <td class="py-3 px-2 uppercase">{{ $alumno->discapacidades ?? '' }}</td>
-                                <td class="py-3 px-2 uppercase">{{ $alumno->nivel_estudios ?? 'LICENCIATURA COMPLETA' }}</td>
+                                <td class="py-3 px-2 uppercase">{{ $ins->grupos_vulnerables ? implode(', ', $ins->grupos_vulnerables) : '' }}</td>
+                                <td class="py-3 px-2 uppercase">{{ $ins->discapacidades ? implode(', ', $ins->discapacidades) : '' }}</td>
+                                <td class="py-3 px-2 uppercase">{{ $ins->escolaridad ?? '' }}</td>
                             </tr>
                             @endif
                         @empty
@@ -441,7 +441,7 @@
             if ($.fn.DataTable.isDataTable('#alumnos_table')) {
                 $('#alumnos_table').DataTable().destroy();
             }
-            $('#alumnos_table').DataTable({
+            var alumnosTable = $('#alumnos_table').DataTable({
                 language: {
                     url: 'https://cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json',
                     search: "Buscar:",
@@ -591,6 +591,46 @@
                     }
                 });
             });
+
+            // AJAX Submission formCompletarAlumno
+            $('#formCompletarAlumno').on('submit', function(e) {
+                e.preventDefault();
+                let form = $(this);
+                let btn = form.find('button[type="submit"]');
+                let originalHtml = btn.html();
+                
+                btn.html('<i class="fas fa-spinner fa-spin mr-2"></i> Guardando...');
+                btn.prop('disabled', true);
+
+                $.ajax({
+                    url: form.attr('action'),
+                    type: form.attr('method'),
+                    data: form.serialize(),
+                    success: function(response) {
+                        btn.html(originalHtml);
+                        btn.prop('disabled', false);
+                        if(response.success) {
+                            Swal.fire({
+                                title: 'Éxito',
+                                text: response.message,
+                                icon: 'success',
+                                timer: 2000,
+                                showConfirmButton: false
+                            }).then(() => {
+                                // Para refrescar limpiamente la vista, recargamos (redibuja tabla instantaneo)
+                                window.location.reload();
+                            });
+                        }
+                    },
+                    error: function(xhr) {
+                        btn.html(originalHtml);
+                        btn.prop('disabled', false);
+                        let msg = xhr.responseJSON ? (xhr.responseJSON.message || 'Hubo un error guardando el alumno') : 'Error al conectar con servidor';
+                        Swal.fire('Error', msg, 'error');
+                    }
+                });
+            });
+
         });
     </script>
 @endpush

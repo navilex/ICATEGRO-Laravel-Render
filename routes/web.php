@@ -95,9 +95,15 @@ Route::middleware('auth')->group(function () {
     Route::post('/grupos/{grupo}/autorizar', [\App\Http\Controllers\GrupoController::class, 'autorizarSubmit'])->name('grupos.autorizar_submit');
     Route::get('/grupos/{grupo}/alumnos', [\App\Http\Controllers\GrupoController::class, 'agregarAlumnos'])->name('grupos.alumnos.create');
     Route::post('/grupos/{grupo}/alumnos', [\App\Http\Controllers\GrupoController::class, 'storeAlumnos'])->name('grupos.alumnos.store');
+    Route::get('/grupos/{grupo}/calificar', [\App\Http\Controllers\GrupoController::class, 'calificarAlumnos'])->name('grupos.calificar');
+    Route::post('/grupos/{grupo}/calificar', [\App\Http\Controllers\GrupoController::class, 'storeCalificaciones'])->name('grupos.calificar.store');
+    Route::get('/grupos/{grupo}/folios', [\App\Http\Controllers\GrupoController::class, 'asignarFolios'])->name('grupos.folios.create');
+    Route::post('/grupos/{grupo}/folios', [\App\Http\Controllers\GrupoController::class, 'storeFolios'])->name('grupos.folios.store');
+    Route::post('/grupos/{grupo}/folios/cambiar', [\App\Http\Controllers\GrupoController::class, 'cambiarFolio'])->name('grupos.folios.cambiar');
+    Route::post('/grupos/{grupo}/folios/cancelar', [\App\Http\Controllers\GrupoController::class, 'cancelarFolio'])->name('grupos.folios.cancelar');
     Route::post('/grupos/{grupo}/alumnos/validar-seleccion', [\App\Http\Controllers\GrupoController::class, 'validarSeleccionAlumno'])->name('grupos.alumnos.validar');
     Route::get('/grupos/{grupo}/alumnos/{alumno}/completar', [\App\Http\Controllers\GrupoController::class, 'completarAlumno'])->name('grupos.alumnos.completar');
-    
+
     Route::get('/api/alumnos/search', [\App\Http\Controllers\GrupoController::class, 'searchAlumnos']);
     Route::get('/api/grupos/campos-formacion/{ofertaId}', [\App\Http\Controllers\GrupoController::class, 'getCamposFormacion']);
     Route::get('/api/grupos/especialidades/{campoId}', [\App\Http\Controllers\GrupoController::class, 'getEspecialidades']);

@@ -347,14 +347,70 @@ class GrupoController extends Controller
 
     public function agregarAlumnos(Grupo $grupo)
     {
-        $grupo->load(['plantel.user', 'curso', 'cursoIcategro', 'ofertaEducativa', 'campoFormacion', 'especialidadOcupacional']);
+        $grupo->load(['plantel.user', 'curso', 'cursoIcategro', 'ofertaEducativa', 'campoFormacion', 'especialidadOcupacional', 'listaAlumnos.student']);
         return view('grupos.agregar_alumnos', compact('grupo'));
     }
 
     public function storeAlumnos(Request $request, Grupo $grupo)
     {
-        // En espera del siguiente módulo de lógica...
-        return redirect()->back();
+        $request->validate([
+            'alumno_id' => 'required|exists:students,id',
+            'vulnerables' => 'nullable|array',
+            'discapacidades' => 'nullable|array',
+            'escolaridad' => 'required|string',
+        ]);
+
+        $alumno = \App\Models\Student::find($request->alumno_id);
+
+        // Verifica que no sea instructor del grupo
+        $instructoresCurps = $grupo->instructores()->pluck('curp')->toArray();
+        if (in_array($alumno->curp, $instructoresCurps)) {
+            if ($request->ajax())
+                return response()->json(['success' => false, 'message' => 'El instructor no puede ser ingresado como alumno en el grupo']);
+            return redirect()->back()->with('error', 'El instructor no puede ser ingresado como alumno en el grupo');
+        }
+
+        // Evita duplicados
+        if ($grupo->listaAlumnos()->where('student_id', $alumno->id)->exists()) {
+            if ($request->ajax())
+                return response()->json(['success' => false, 'message' => 'El alumno ya está inscripto en este grupo']);
+            return redirect()->back()->with('error', 'El alumno ya está inscripto en este grupo');
+        }
+
+        // Crear registro en lista_cursos_alumnos
+        $registro = new \App\Models\ListaCursoAlumno();
+        $registro->student_id = $alumno->id;
+        $registro->group_id = $grupo->id;
+        $registro->plantel = $grupo->plantel->name ?? null;
+
+        // Nombre del curso (CAE vs Extension)
+        if ($grupo->tipo_servicio === 'CAE' && $grupo->curso) {
+            $registro->name = $grupo->curso->name;
+        } elseif ($grupo->tipo_servicio === 'Extensión' && $grupo->cursoIcategro) {
+            $registro->name = $grupo->cursoIcategro->name;
+        } else {
+            $registro->name = 'CURSO NO ASIGNADO';
+        }
+
+        $registro->start_date = $grupo->fecha_inicio;
+        $registro->end_date = $grupo->fecha_termino;
+
+        // Guardar arrays como JSON gracias a los Casts en el Modelo
+        $registro->grupos_vulnerables = $request->vulnerables ?? [];
+        $registro->discapacidades = $request->discapacidades ?? [];
+        $registro->escolaridad = $request->escolaridad;
+
+        $registro->save();
+
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Alumno agregado correctamente al grupo',
+                'id' => $registro->id
+            ]);
+        }
+
+        return redirect()->route('grupos.alumnos.create', $grupo->id)->with('success', 'Alumno agregado correctamente');
     }
 
     public function searchAlumnos(Request $request)
@@ -394,7 +450,7 @@ class GrupoController extends Controller
         ]);
 
         $alumno = \App\Models\Student::find($request->alumno_id);
-        
+
         // Validar que el alumno no sea instructor de este grupo
         // Asumiendo que el instructor tiene CURP
         $instructoresCurps = $grupo->instructores()->pluck('curp')->toArray();
@@ -409,5 +465,211 @@ class GrupoController extends Controller
     public function completarAlumno(Grupo $grupo, \App\Models\Student $alumno)
     {
         return view('grupos.completar_alumno', compact('grupo', 'alumno'));
+    }
+
+    public function calificarAlumnos(Grupo $grupo)
+    {
+        $grupo->load(['plantel.user', 'curso', 'cursoIcategro', 'ofertaEducativa', 'campoFormacion', 'especialidadOcupacional', 'listaAlumnos.student']);
+        return view('grupos.calificar_alumnos', compact('grupo'));
+    }
+
+    public function storeCalificaciones(Request $request, Grupo $grupo)
+    {
+        $request->validate([
+            'alumnos' => 'required|array',
+            'alumnos.*.student_id' => 'required|exists:lista_cursos_alumnos,student_id',
+            'alumnos.*.estatus' => 'required|in:APROBADO,NO APROBADO,BAJA,DESERCION',
+            'alumnos.*.calificacion' => 'required|numeric|min:5|max:10'
+        ]);
+
+        foreach ($request->alumnos as $alumnoData) {
+            $estatus = $alumnoData['estatus'];
+            $calificacion = (int) $alumnoData['calificacion'];
+
+            if ($estatus === 'APROBADO' && $calificacion < 6) {
+                return response()->json(['success' => false, 'message' => "Un alumno tiene estatus APROBADO pero calificación reprobatoria ($calificacion)"]);
+            }
+            if ($estatus !== 'APROBADO' && $calificacion >= 6) {
+                return response()->json(['success' => false, 'message' => "Un alumno tiene estatus reprobatorio/baja ($estatus) pero calificación aprobatoria. Debe ser 5."]);
+            }
+        }
+
+        // Validar que se reciba calificación de todos
+        $totalAlumnos = $grupo->listaAlumnos()->count();
+        if (count($request->alumnos) !== $totalAlumnos) {
+            return response()->json(['success' => false, 'message' => "Se deben calificar a todos los alumnos inscritos para poder guardar."]);
+        }
+
+        foreach ($request->alumnos as $alumnoData) {
+            $grupo->listaAlumnos()->where('student_id', $alumnoData['student_id'])->update([
+                'student_status' => $alumnoData['estatus'],
+                'calificacion' => $alumnoData['calificacion']
+            ]);
+        }
+
+        $grupo->update(['estatus' => 'Calificado']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Todas las calificaciones han sido guardadas. Grupo CALIFICADO.'
+        ]);
+    }
+
+    public function asignarFolios(Grupo $grupo)
+    {
+        $grupo->load(['plantel.user', 'curso', 'cursoIcategro', 'ofertaEducativa', 'campoFormacion', 'especialidadOcupacional', 'listaAlumnos.student']);
+        return view('grupos.asignar_folios', compact('grupo'));
+    }
+
+    public function storeFolios(Request $request, Grupo $grupo)
+    {
+        $request->validate([
+            'doc_type' => 'required|in:CONSTANCIA,DIPLOMA,RECONOCIMIENTO',
+            'folio_inicial' => 'required',
+            'folio_final' => 'required'
+        ]);
+
+        $alumnosAprobados = $grupo->listaAlumnos()->where('student_status', 'APROBADO')->get();
+        $totalNecesarios = $alumnosAprobados->count();
+
+        if ($totalNecesarios === 0) {
+            return response()->json(['success' => false, 'message' => 'Debe haber al menos un alumno APROBADO para asignar folios.']);
+        }
+
+        if (!preg_match('/^(.*?)(\d+)$/', $request->folio_inicial, $mInit)) {
+            return response()->json(['success' => false, 'message' => 'Folio inicial inválido. Debe terminar con un número (Ej. GR-001).']);
+        }
+        if (!preg_match('/^(.*?)(\d+)$/', $request->folio_final, $mFin)) {
+            return response()->json(['success' => false, 'message' => 'Folio final inválido. Debe terminar con un número.']);
+        }
+
+        $prefijo = $mInit[1];
+        $numInicial = (int) $mInit[2];
+        $padLength = strlen($mInit[2]);
+
+        if ($prefijo !== $mFin[1]) {
+            return response()->json(['success' => false, 'message' => 'El prefijo del folio inicial y final no coincide.']);
+        }
+
+        $numFinal = (int) $mFin[2];
+        $rangoDisponible = $numFinal - $numInicial + 1;
+
+        if ($numInicial > $numFinal) {
+            return response()->json(['success' => false, 'message' => 'El folio inicial no puede ser mayor al final.']);
+        }
+
+        if ($rangoDisponible < $totalNecesarios) {
+            return response()->json(['success' => false, 'message' => "El rango proporciona $rangoDisponible folios, pero se necesitan $totalNecesarios para los aprobados."]);
+        }
+
+        $foliosRequeridos = [];
+        for ($i = 0; $i < $totalNecesarios; $i++) {
+            $num = $numInicial + $i;
+            $foliosRequeridos[] = $prefijo . str_pad($num, $padLength, '0', STR_PAD_LEFT);
+        }
+
+        $ocupados = \App\Models\ListaCursoAlumno::with('student')
+            ->whereIn('folio', $foliosRequeridos)
+            ->get();
+
+        if ($ocupados->count() > 0) {
+            $errores = [];
+            foreach ($ocupados as $occ) {
+                $nombreCompleto = trim(($occ->student->name ?? 'Usuario') . ' ' . ($occ->student->lastname1 ?? '') . ' ' . ($occ->student->lastname2 ?? ''));
+                $errores[] = "EI FOLIO <b>{$occ->folio}</b> ya se encuentra ocupado por <b class='uppercase'>{$nombreCompleto}</b> en el grupo con ID <b>{$occ->group_id}</b>";
+            }
+            return response()->json([
+                'success' => false,
+                'errors_list' => $errores
+            ], 422);
+        }
+
+        // Asignación Aprobados
+        $idx = 0;
+        foreach ($alumnosAprobados as $aprobado) {
+            $aprobado->update([
+                'doc_type' => $request->doc_type,
+                'folio' => $foliosRequeridos[$idx]
+            ]);
+            $idx++;
+        }
+
+        // Asignación No Aprobados (Bajas, etc)
+        $grupo->listaAlumnos()->where('student_status', '!=', 'APROBADO')->update([
+            'doc_type' => 'NO APLICA',
+            'folio' => null
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'Se han asignado los folios correctamente a los alumnos aprobados.']);
+    }
+
+    public function cambiarFolio(Request $request, Grupo $grupo)
+    {
+        $request->validate([
+            'id_lista' => 'required|exists:lista_cursos_alumnos,id',
+            'folio_nuevo' => 'required|string',
+            'motivo_cambio' => 'required|string|max:500'
+        ]);
+
+        // Asegurarnos que el nuevo folio tenga la parte alfanumérica y numérica correcta.
+        // Aunque la vista mande los dos campos separados, es más seguro que lo manden interpolado y aquí validemos que sea distinto.
+        $nuevoFolio = $request->folio_nuevo;
+
+        $item = \App\Models\ListaCursoAlumno::with('student')->findOrFail($request->id_lista);
+
+        // Validar que el folio pertenezca al grupo que estamos procesando
+        if ($item->group_id != $grupo->id) {
+            return response()->json(['success' => false, 'message' => 'El registro no pertenece a este grupo.'], 403);
+        }
+
+        if ($item->folio === $nuevoFolio) {
+            return response()->json(['success' => false, 'message' => 'El nuevo folio no puede ser idéntico al folio actual.']);
+        }
+
+        // Buscar duplicados globales
+        $ocupado = \App\Models\ListaCursoAlumno::with('student')
+            ->where('folio', $nuevoFolio)
+            ->first();
+
+        if ($ocupado) {
+            $nombre = trim(($ocupado->student->name ?? 'Usuario') . ' ' . ($ocupado->student->lastname1 ?? '') . ' ' . ($ocupado->student->lastname2 ?? ''));
+            return response()->json([
+                'success' => false,
+                'message' => "El FOLIO <b>$nuevoFolio</b> ya se encuentra ocupado por <strong class='uppercase'>$nombre</strong> en el grupo con ID <b>$ocupado->group_id</b>."
+            ], 422); // Note this uses "message" not "errors_list" so we must handle it in the JS sweetalert
+        }
+
+        // Save
+        $item->update([
+            'folio' => $nuevoFolio,
+            'folio_motivo_cambio' => $request->motivo_cambio
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'El folio ha sido actualizado correctamente.']);
+    }
+
+    public function cancelarFolio(Request $request, Grupo $grupo)
+    {
+        $request->validate([
+            'id_lista' => 'required|exists:lista_cursos_alumnos,id',
+            'estatus_nuevo' => 'required|string|in:NO APROBADO,BAJA,DESERCION',
+            'motivo_cancelacion' => 'required|string|max:200'
+        ]);
+
+        $item = \App\Models\ListaCursoAlumno::with('student')->findOrFail($request->id_lista);
+
+        if ($item->group_id != $grupo->id) {
+            return response()->json(['success' => false, 'message' => 'El registro no pertenece a este grupo.'], 403);
+        }
+
+        $item->update([
+            'student_status' => $request->estatus_nuevo,
+            'folio' => null,
+            'doc_type' => 'NO APLICA',
+            'calificacion' => 5,
+            'folio_motivo_cambio' => 'CANCELACIÓN: ' . $request->motivo_cancelacion
+        ]);
+
+        return response()->json(['success' => true, 'message' => 'El folio del alumno ha sido cancelado con éxito.']);
     }
 }

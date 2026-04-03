@@ -97,4 +97,9 @@ class Grupo extends Model
     {
         return $this->hasMany(GrupoRevision::class);
     }
+
+    public function listaAlumnos()
+    {
+        return $this->hasMany(ListaCursoAlumno::class, 'group_id');
+    }
 }

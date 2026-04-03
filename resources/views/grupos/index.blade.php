@@ -396,61 +396,61 @@
             // Generador dinámico de botones según estatus
             function getActionButtons(id, estatus) {
                 let btnVerDatos = `
-                            <a href="/grupos/${id}" class="flex flex-col items-center cursor-pointer group w-24">
-                                <div class="w-20 h-20 rounded-full border-4 border-gray-200 flex items-center justify-center bg-white shadow-md mb-3 group-hover:border-blue-300 group-hover:shadow-lg transition">
-                                    <i class="fas fa-eye text-4xl text-blue-400 group-hover:text-blue-500 transition"></i>
-                                </div>
-                                <span class="text-[11px] font-bold text-gray-800 uppercase leading-snug group-hover:text-blue-600 transition text-center">VER DATOS DEL GRUPO</span>
-                            </a>
-                        `;
+                                            <a href="/grupos/${id}" class="flex flex-col items-center cursor-pointer group w-24">
+                                                <div class="w-20 h-20 rounded-full border-4 border-gray-200 flex items-center justify-center bg-white shadow-md mb-3 group-hover:border-blue-300 group-hover:shadow-lg transition">
+                                                    <i class="fas fa-eye text-4xl text-blue-400 group-hover:text-blue-500 transition"></i>
+                                                </div>
+                                                <span class="text-[11px] font-bold text-gray-800 uppercase leading-snug group-hover:text-blue-600 transition text-center">VER DATOS DEL GRUPO</span>
+                                            </a>
+                                        `;
                 let btnModificar = `
-                        <a href="/grupos/${id}/edit" class="flex flex-col items-center cursor-pointer group w-24">
-                            <div class="w-20 h-20 rounded-full border-4 border-gray-200 flex items-center justify-center bg-white shadow-md mb-3 group-hover:border-yellow-300 group-hover:shadow-lg transition">
-                                <i class="fas fa-file-signature text-4xl text-yellow-500 group-hover:text-yellow-600 transition"></i>
-                            </div>
-                            <span class="text-[11px] font-bold text-gray-800 uppercase leading-snug group-hover:text-yellow-600 transition text-center">MODIFICAR GRUPO</span>
-                        </a>
-                    `;
+                                        <a href="/grupos/${id}/edit" class="flex flex-col items-center cursor-pointer group w-24">
+                                            <div class="w-20 h-20 rounded-full border-4 border-gray-200 flex items-center justify-center bg-white shadow-md mb-3 group-hover:border-yellow-300 group-hover:shadow-lg transition">
+                                                <i class="fas fa-file-signature text-4xl text-yellow-500 group-hover:text-yellow-600 transition"></i>
+                                            </div>
+                                            <span class="text-[11px] font-bold text-gray-800 uppercase leading-snug group-hover:text-yellow-600 transition text-center">MODIFICAR GRUPO</span>
+                                        </a>
+                                    `;
                 let btnAgregarAlumnos = `
-                            <a href="/grupos/${id}/alumnos" class="flex flex-col items-center cursor-pointer group w-24">
-                                <div class="w-20 h-20 rounded-full border-4 border-gray-200 flex items-center justify-center bg-white shadow-md mb-3 group-hover:border-green-300 group-hover:shadow-lg transition relative">
-                                    <i class="fas fa-users text-4xl text-green-500 group-hover:text-green-600 transition"></i>
-                                    <div class="absolute -bottom-1 -right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold text-xs shadow border-2 border-white"><i class="fas fa-plus"></i></div>
-                                </div>
-                                <span class="text-[11px] font-bold text-gray-800 uppercase leading-snug group-hover:text-green-600 transition text-center">AGREGAR ALUMNOS</span>
-                            </a>
-                        `;
+                                            <a href="/grupos/${id}/alumnos" class="flex flex-col items-center cursor-pointer group w-24">
+                                                <div class="w-20 h-20 rounded-full border-4 border-gray-200 flex items-center justify-center bg-white shadow-md mb-3 group-hover:border-green-300 group-hover:shadow-lg transition relative">
+                                                    <i class="fas fa-users text-4xl text-green-500 group-hover:text-green-600 transition"></i>
+                                                    <div class="absolute -bottom-1 -right-1 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center font-bold text-xs shadow border-2 border-white"><i class="fas fa-plus"></i></div>
+                                                </div>
+                                                <span class="text-[11px] font-bold text-gray-800 uppercase leading-snug group-hover:text-green-600 transition text-center">AGREGAR ALUMNOS</span>
+                                            </a>
+                                        `;
                 let btnCalificar = `
-                            <div class="flex flex-col items-center cursor-pointer group w-24">
-                                <div class="w-20 h-20 rounded-full border-4 border-gray-200 flex items-center justify-center bg-white shadow-md mb-3 group-hover:border-purple-300 group-hover:shadow-lg transition">
-                                    <i class="fas fa-clipboard-check text-4xl text-purple-400 group-hover:text-purple-500 transition"></i>
-                                </div>
-                                <span class="text-[11px] font-bold text-gray-800 uppercase leading-snug group-hover:text-purple-600 transition text-center">CALIFICAR ALUMNOS</span>
-                            </div>
-                        `;
+                                            <a href="/grupos/${id}/calificar" class="flex flex-col items-center cursor-pointer group w-24">
+                                                <div class="w-20 h-20 rounded-full border-4 border-gray-200 flex items-center justify-center bg-white shadow-md mb-3 group-hover:border-purple-300 group-hover:shadow-lg transition">
+                                                    <i class="fas fa-clipboard-check text-4xl text-purple-400 group-hover:text-purple-500 transition"></i>
+                                                </div>
+                                                <span class="text-[11px] font-bold text-gray-800 uppercase leading-snug group-hover:text-purple-600 transition text-center">CALIFICAR ALUMNOS</span>
+                                            </a>
+                                        `;
                 let btnFolios = `
-                            <div class="flex flex-col items-center cursor-pointer group w-24">
-                                <div class="w-20 h-20 rounded-full border-4 border-gray-200 flex items-center justify-center bg-white shadow-md mb-3 group-hover:border-orange-300 group-hover:shadow-lg transition relative">
-                                    <i class="fas fa-clipboard-list text-4xl text-orange-400 group-hover:text-orange-500 transition"></i>
-                                    <div class="absolute -bottom-1 -right-1 text-yellow-500 rounded-full bg-white w-6 h-6 flex items-center justify-center font-bold text-[10px] shadow border-2 border-white"><i class="fas fa-certificate"></i></div>
-                                </div>
-                                <span class="text-[11px] font-bold text-gray-800 uppercase leading-snug group-hover:text-orange-600 transition text-center">ASIGNAR FOLIOS</span>
-                            </div>
-                        `;
+                                            <a href="/grupos/${id}/folios" class="flex flex-col items-center cursor-pointer group w-24">
+                                                <div class="w-20 h-20 rounded-full border-4 border-gray-200 flex items-center justify-center bg-white shadow-md mb-3 group-hover:border-orange-300 group-hover:shadow-lg transition relative">
+                                                    <i class="fas fa-clipboard-list text-4xl text-orange-400 group-hover:text-orange-500 transition"></i>
+                                                    <div class="absolute -bottom-1 -right-1 text-yellow-500 rounded-full bg-white w-6 h-6 flex items-center justify-center font-bold text-[10px] shadow border-2 border-white"><i class="fas fa-certificate"></i></div>
+                                                </div>
+                                                <span class="text-[11px] font-bold text-gray-800 uppercase leading-snug group-hover:text-orange-600 transition text-center">ASIGNAR FOLIOS</span>
+                                            </a>
+                                        `;
                 let btnAutorizar = `
-                            <a href="/grupos/${id}/autorizar" class="flex flex-col items-center cursor-pointer group w-24">
-                                <div class="w-20 h-20 rounded-full border-4 border-gray-200 flex items-center justify-center bg-white shadow-md mb-3 group-hover:border-gray-800 group-hover:shadow-lg transition">
-                                    <i class="fas fa-thumbs-up text-4xl text-gray-700 group-hover:text-black transition"></i>
-                                </div>
-                                <span class="text-[11px] font-bold text-gray-800 uppercase leading-snug group-hover:text-black transition text-center">AUTORIZAR GRUPO</span>
-                            </a>
-                        `;
+                                            <a href="/grupos/${id}/autorizar" class="flex flex-col items-center cursor-pointer group w-24">
+                                                <div class="w-20 h-20 rounded-full border-4 border-gray-200 flex items-center justify-center bg-white shadow-md mb-3 group-hover:border-gray-800 group-hover:shadow-lg transition">
+                                                    <i class="fas fa-thumbs-up text-4xl text-gray-700 group-hover:text-black transition"></i>
+                                                </div>
+                                                <span class="text-[11px] font-bold text-gray-800 uppercase leading-snug group-hover:text-black transition text-center">AUTORIZAR GRUPO</span>
+                                            </a>
+                                        `;
 
                 let html = '';
 
-                if (estatus.toUpperCase() === 'AUTORIZADO' || estatus.toUpperCase() === 'PENDIENTE') {
-                    html = btnVerDatos + btnModificar + btnAgregarAlumnos + btnAutorizar;
-                } else if (estatus.toUpperCase() === 'CONCLUIDO') {
+                if (estatus.toUpperCase() === 'AUTORIZADO' || estatus.toUpperCase() === 'PENDIENTE' || estatus.toUpperCase() === 'PROCESO') {
+                    html = btnVerDatos + btnAutorizar + btnModificar + btnAgregarAlumnos + btnCalificar;
+                } else if (estatus.toUpperCase() === 'CONCLUIDO' || estatus.toUpperCase() === 'CALIFICADO') {
                     html = btnVerDatos + btnModificar + btnCalificar + btnFolios;
                 } else {
                     html = btnVerDatos + btnAutorizar;
