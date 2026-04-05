@@ -217,21 +217,25 @@
                     </div>
                 </div>
 
-                <!-- Row: Unidad de capacitación... -->
-                <div class="mb-8">
-                    <label for="adscription" class="block text-red-800 font-bold mb-1">* Unidad de capacitación / Acción
-                        móvil / Acción extramuros / DG</label>
+                <div class="mb-6">
+                    <label for="adscription" class="block text-red-800 font-bold mb-1">* Clasificación del Plantel</label>
                     <select name="adscription" id="adscription"
                         class="w-full border-2 border-gray-400 rounded-full p-2 px-4 focus:outline-none focus:border-red-500 bg-white"
                         required>
-                        <option value="">» SELECCIONA</option>
+                        <option value="">» SELECCIONA CLASIFICACIÓN</option>
                         <option value="UNIDAD DE CAPACITACION" {{ old('adscription') == 'UNIDAD DE CAPACITACION' ? 'selected' : '' }}>UNIDAD DE CAPACITACION</option>
-                        <option value="ACCION MOVIL" {{ old('adscription') == 'ACCION MOVIL' ? 'selected' : '' }}>ACCION MOVIL
-                        </option>
-                        <option value="ACCION EXTRAMUROS" {{ old('adscription') == 'ACCION EXTRAMUROS' ? 'selected' : '' }}>
-                            ACCION EXTRAMUROS</option>
-                        <option value="DG" {{ old('adscription') == 'DG' ? 'selected' : '' }}>DG</option>
+                        <option value="ACCION MOVIL" {{ old('adscription') == 'ACCION MOVIL' ? 'selected' : '' }}>ACCION MOVIL</option>
+                        <option value="ACCION EXTRAMUROS" {{ old('adscription') == 'ACCION EXTRAMUROS' ? 'selected' : '' }}>ACCION EXTRAMUROS</option>
+                        <option value="DIRECCION GENERAL" {{ old('adscription') == 'DIRECCION GENERAL' ? 'selected' : '' }}>DIRECCION GENERAL</option>
                     </select>
+                </div>
+
+                <div id="plantel_container" class="mb-8 {{ old('plantel_id') ? '' : 'hidden' }}">
+                    <label for="plantel_id" class="block text-red-800 font-bold mb-1">* Seleccione el Plantel específico</label>
+                    <select name="plantel_id" id="plantel_id"
+                        class="w-full border-2 border-red-400 rounded-full p-2 px-4 focus:outline-none focus:border-red-600 bg-white">
+                        <option value="">» SELECCIONA EL PLANTEL</option>
+                        </select>
                 </div>
 
                 <!-- Section Title: Datos de usuario -->
@@ -367,11 +371,43 @@
             const statusText = document.getElementById('curp-status');
             const resetBtn = document.getElementById('reset-btn');
             const usernameInput = document.getElementById('username');
+            const adscriptionSelect = document.getElementById('adscription');
+            const plantelSelect = document.getElementById('plantel_id');
+            const plantelContainer = document.getElementById('plantel_container');
+
+            // Pasamos la colección de planteles de PHP a un objeto JS
+            const todosLosPlanteles = @json($planteles);
 
             let userEditedUsername = false;
 
             usernameInput.addEventListener('input', function () {
                 userEditedUsername = true;
+            });
+
+            adscriptionSelect.addEventListener('change', function() {
+            const seleccion = this.value;
+            
+            // Limpiar opciones anteriores
+            plantelSelect.innerHTML = '<option value="">» SELECCIONA EL PLANTEL</option>';
+
+            if (seleccion) {
+                // Filtramos los planteles que coincidan con la clasificación
+                const filtrados = todosLosPlanteles.filter(p => p.clasificacion === seleccion);
+
+                if (filtrados.length > 0) {
+                    filtrados.forEach(p => {
+                        const option = document.createElement('option');
+                        option.value = p.id;
+                        option.textContent = p.name;
+                        plantelSelect.appendChild(option);
+                    });
+                    plantelContainer.classList.remove('hidden');
+                } else {
+                    plantelContainer.classList.add('hidden');
+                }
+            } else {
+                plantelContainer.classList.add('hidden');
+            }
             });
 
             function updateUsername() {

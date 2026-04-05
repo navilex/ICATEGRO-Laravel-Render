@@ -20,8 +20,7 @@ class Plantel extends Model
         'numero_exterior',
         'numero_interior',
         'codigo_postal',
-        'tipo_asignacion',
-        'user_id'
+        'tipo_asignacion'
     ];
 
     public function convenios()

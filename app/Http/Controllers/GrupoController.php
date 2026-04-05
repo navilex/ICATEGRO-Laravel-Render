@@ -507,7 +507,7 @@ class GrupoController extends Controller
             ]);
         }
 
-        $grupo->update(['estatus' => 'Calificado']);
+        $grupo->update(['estatus' => 'CALIFICADO']);
 
         return response()->json([
             'success' => true,

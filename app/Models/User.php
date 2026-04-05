@@ -37,6 +37,7 @@ class User extends Authenticatable
         'email',
         'password',
         'permissions',
+        'plantel_id'
     ];
 
     /**
@@ -57,9 +58,13 @@ class User extends Authenticatable
     protected function casts(): array
     {
         return [
-            'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'permissions' => 'array',
         ];
+    }
+
+    public function plantel()
+    {
+        return $this->belongsTo(Plantel::class);
     }
 }

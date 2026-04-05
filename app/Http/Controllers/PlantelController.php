@@ -10,7 +10,7 @@ class PlantelController extends Controller
 {
     public function index()
     {
-        $planteles = Plantel::with('user')->get();
+        $planteles = Plantel::all();
         $usuarios = User::all();
 
         return view('planteles.index', compact('planteles', 'usuarios'));
@@ -30,8 +30,7 @@ class PlantelController extends Controller
             'numero_exterior' => 'required|string|max:255',
             'numero_interior' => 'nullable|string|max:255',
             'codigo_postal' => 'required|string|max:10',
-            'tipo_asignacion' => 'required|string|max:255',
-            'user_id' => 'required|exists:users,id',
+            'tipo_asignacion' => 'required|string|max:255'
         ]);
 
         Plantel::create($request->all());

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Student;
 use App\Models\Instructor;
+use App\Models\Plantel;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
 
@@ -25,7 +26,8 @@ class UserController extends Controller
      */
     public function create()
     {
-        return view('users.create');
+        $planteles = Plantel::all();
+        return view('users.create', compact('planteles'));
     }
 
     /**
@@ -53,6 +55,7 @@ class UserController extends Controller
             'password' => ['required', 'string', 'min:8'],
             'role' => 'required|string|max:255',
             'permissions' => 'nullable|array',
+            'plantel_id' => 'nullable|exists:planteles,id'
         ]);
 
         $user = User::create([
@@ -75,6 +78,7 @@ class UserController extends Controller
             'password' => Hash::make($validated['password']),
             'role' => strtoupper($validated['role']),
             'permissions' => $validated['permissions'] ?? [],
+            'plantel_id' => $validated['plantel_id'] ?? null
         ]);
 
         return redirect()->route('dashboard')->with('success', 'Usuario registrado correctamente.');
