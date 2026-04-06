@@ -214,14 +214,14 @@
                             </select>
                         </div>
                         <div>
-                            <label for="user_id" class="block text-red-800 font-bold mb-1">* USUARIO</label>
-                            <select name="user_id" id="user_id"
+                            <label for="director_id" class="block text-red-800 font-bold mb-1">* USUARIO</label>
+                            <select name="director_id" id="director_id"
                                 class="w-full border-2 border-gray-400 rounded-full p-2 px-4 focus:outline-none focus:border-red-500 bg-white"
                                 required>
                                 <option value="">» SELECCIONA EL USUARIO</option>
                                 @foreach($usuarios as $user)
-                                    <option value="{{ $user->id }}" {{ old('user_id') == $user->id ? 'selected' : '' }}>
-                                        {{ $user->name }}
+                                    <option value="{{ $user->id }}" {{ old('director_id') == $user->id ? 'selected' : '' }}>
+                                        {{ $user->name }} {{ $user->lastname }} {{ $user->lastname2 }}
                                     </option>
                                 @endforeach
                             </select>

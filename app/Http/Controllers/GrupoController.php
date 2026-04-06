@@ -164,7 +164,7 @@ class GrupoController extends Controller
     }
     public function show(Grupo $grupo)
     {
-        $grupo->load(['creador', 'calendarios', 'convenios', 'instructores', 'revisiones.user', 'plantel.user', 'curso', 'cursoIcategro', 'ofertaEducativa', 'campoFormacion', 'especialidadOcupacional']);
+        $grupo->load(['creador', 'plantel.usuarioEncargado', 'calendarios', 'convenios', 'instructores', 'revisiones.user', 'plantel.user', 'curso', 'cursoIcategro', 'ofertaEducativa', 'campoFormacion', 'especialidadOcupacional']);
 
         return view('grupos.show', compact('grupo'));
     }
@@ -253,8 +253,8 @@ class GrupoController extends Controller
         if ($estatusCambiado) {
             $validated['estatus'] = $nuevoEstatus;
             if ($nuevoEstatus === 'AUTORIZADO') {
-                $user = auth()->user();
-                $validated['autorizado_por'] = trim($user->name . ' ' . $user->lastname . ' ' . $user->lastname2);
+                //$user = auth()->user();
+                $validated['autorizado_por'] = auth()->id();
                 $validated['fecha_autorizacion'] = now();
             }
         }

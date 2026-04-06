@@ -72,14 +72,24 @@
                     <div class="text-[#a02142] font-bold text-sm mb-1">Estatus Director/encargado</div>
                     <div
                         class="bg-white border-2 border-gray-800 rounded-full px-4 py-2 text-sm font-bold text-gray-800 uppercase">
-                        {{ $grupo->plantel && $grupo->plantel->user ? $grupo->plantel->user->role : 'DIRECTOR' }}
+                        @if($grupo->plantel && $grupo->plantel->tipo_asignacion)
+                            {{ $grupo->plantel->tipo_asignacion }} 
+                        @else
+                            TIPO NO DEFINIDO
+                        @endif
                     </div>
                 </div>
                 <div class="col-span-2 border-b border-gray-300 pb-2 mt-2">
                     <div class="text-[#a02142] font-bold text-sm mb-1">Director/encargado</div>
                     <div
                         class="bg-white border-2 border-gray-800 rounded-full px-4 py-2 text-sm font-bold text-gray-800 uppercase">
-                        {{ $grupo->plantel && $grupo->plantel->user ? trim($grupo->plantel->user->name . ' ' . $grupo->plantel->user->last_name . ' ' . $grupo->plantel->user->last_name2) : 'ADMINISTRADOR' }}
+                        @if($grupo->plantel && $grupo->plantel->usuarioEncargado)
+                            {{ $grupo->plantel->usuarioEncargado->name }}
+                            {{ $grupo->plantel->usuarioEncargado->lastname }}
+                            {{ $grupo->plantel->usuarioEncargado->lastname2 }}
+                        @else
+                            DIRECTOR NO ASIGNADO
+                        @endif
                     </div>
                 </div>
             </div>

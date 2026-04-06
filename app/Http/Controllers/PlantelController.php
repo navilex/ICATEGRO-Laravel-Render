@@ -30,7 +30,8 @@ class PlantelController extends Controller
             'numero_exterior' => 'required|string|max:255',
             'numero_interior' => 'nullable|string|max:255',
             'codigo_postal' => 'required|string|max:10',
-            'tipo_asignacion' => 'required|string|max:255'
+            'tipo_asignacion' => 'required|string|max:255',
+            'director_id' => 'required|exists:users,id'
         ]);
 
         Plantel::create($request->all());

@@ -68,7 +68,12 @@
                                     <td class="px-2 py-4">{{ $plantel->clasificacion }}</td>
                                     <td class="px-2 py-4">{{ $plantel->estado }} / {{ $plantel->municipio }}</td>
                                     <td class="px-2 py-4 text-center">
-                                        {{ $plantel->user ? $plantel->user->name : 'N/A' }}
+                                        @if($plantel->usuarioEncargado)
+                                            {{ $plantel->usuarioEncargado->name }} {{ $plantel->usuarioEncargado->lastname }}
+                                            {{ $plantel->usuarioEncargado->lastname2 }}
+                                        @else
+                                            <span class="text-red-500 italic text-xs font-bold">Sin titular asignado</span>
+                                        @endif
                                     </td>
                                 </tr>
                             @endforeach

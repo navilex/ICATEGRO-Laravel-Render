@@ -20,7 +20,8 @@ class Plantel extends Model
         'numero_exterior',
         'numero_interior',
         'codigo_postal',
-        'tipo_asignacion'
+        'tipo_asignacion',
+        'director_id'
     ];
 
     public function convenios()
@@ -31,5 +32,11 @@ class Plantel extends Model
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    // En el modelo Plantel
+    public function usuarioEncargado()
+    {
+        return $this->belongsTo(User::class, 'director_id');
     }
 }

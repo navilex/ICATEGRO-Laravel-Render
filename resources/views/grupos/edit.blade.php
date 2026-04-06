@@ -78,14 +78,14 @@
                         class="bg-gray-50 border-2 border-gray-300 rounded-full px-4 py-2 text-sm font-bold text-gray-800 flex items-center shadow-inner">
                         <span
                             class="w-4 h-4 rounded-full mr-3 shadow-sm 
-                                                                                                                                                @if($grupo->estatus == 'PENDIENTE') bg-yellow-500 
-                                                                                                                                                @elseif($grupo->estatus == 'AUTORIZADO') bg-green-600 
-                                                                                                                                                @elseif($grupo->estatus == 'PROCESO') bg-blue-500 
-                                                                                                                                                @elseif($grupo->estatus == 'CONCLUIDO') bg-purple-700 
-                                                                                                                                                @elseif($grupo->estatus == 'RECHAZADO') bg-red-600 
-                                                                                                                                                @elseif($grupo->estatus == 'CALIFICADO') bg-pink-500
-                                                                                                                                                @else bg-gray-500 @endif
-                                                                                                                                            "></span>
+                                                                                                                                                                        @if($grupo->estatus == 'PENDIENTE') bg-yellow-500 
+                                                                                                                                                                        @elseif($grupo->estatus == 'AUTORIZADO') bg-green-600 
+                                                                                                                                                                        @elseif($grupo->estatus == 'PROCESO') bg-blue-500 
+                                                                                                                                                                        @elseif($grupo->estatus == 'CONCLUIDO') bg-purple-700 
+                                                                                                                                                                        @elseif($grupo->estatus == 'RECHAZADO') bg-red-600 
+                                                                                                                                                                        @elseif($grupo->estatus == 'CALIFICADO') bg-pink-500
+                                                                                                                                                                        @else bg-gray-500 @endif
+                                                                                                                                                                    "></span>
                         {{ strtoupper($grupo->estatus) }}
                     </div>
                 </div>
@@ -103,14 +103,24 @@
                     <div class="text-[#a02142] font-bold text-sm mb-1">Estatus Director/encargado</div>
                     <div
                         class="bg-white border-2 border-gray-400 rounded-full px-4 py-2 text-sm font-bold text-gray-800 uppercase">
-                        {{ $grupo->plantel && $grupo->plantel->user ? $grupo->plantel->user->role : 'DIRECTOR' }}
+                        @if($grupo->plantel && $grupo->plantel->tipo_asignacion)
+                            {{ $grupo->plantel->tipo_asignacion }}
+                        @else
+                            TIPO NO DEFINIDO
+                        @endif
                     </div>
                 </div>
                 <div class="col-span-2 border-b border-gray-300 pb-2 mt-2">
                     <div class="text-[#a02142] font-bold text-sm mb-1">Director/encargado</div>
                     <div
                         class="bg-white border-2 border-gray-400 rounded-full px-4 py-2 text-sm font-bold text-gray-800 uppercase">
-                        {{ $grupo->plantel && $grupo->plantel->user ? $grupo->plantel->user->name . ' ' . $grupo->plantel->user->last_name : 'ADMINISTRADOR' }}
+                        @if($grupo->plantel && $grupo->plantel->usuarioEncargado)
+                            {{ $grupo->plantel->usuarioEncargado->name }}
+                            {{ $grupo->plantel->usuarioEncargado->lastname }}
+                            {{ $grupo->plantel->usuarioEncargado->lastname2 }}
+                        @else
+                            DIRECTOR NO ASIGNADO
+                        @endif
                     </div>
                 </div>
             </div>
@@ -739,7 +749,7 @@
                     <div>
                         <label class="block text-[#a02142] font-bold mb-2 text-lg">Autorizado por</label>
                         <input type="text"
-                            value="{{ $grupo->autorizador->name }} {{ $grupo->autorizador->lastname }} {{ $grupo->autorizador->lastname2 }}"
+                            value="{{ $grupo->autorizador ? "{$grupo->autorizador->name} {$grupo->autorizador->lastname} {$grupo->autorizador->lastname2}" : 'Sin autorización' }}"
                             class="w-full border-2 border-gray-400 rounded-full p-3 focus:outline-none bg-white font-bold text-gray-800 uppercase cursor-not-allowed"
                             readonly>
                     </div>
@@ -1481,11 +1491,11 @@
                     const actionTd = document.createElement('td');
                     actionTd.className = 'py-3 px-2 flex justify-center items-center h-full';
                     actionTd.innerHTML = `
-                                                                                                                                            <button type="button" class="text-red-500 hover:text-red-700 mx-1 btn_eliminar_cal" data-index="${index}" title="Eliminar">
-                                                                                                                                                <i class="fas fa-trash-alt"></i>
-                                                                                                                                            </button>
-                                                                                                                                            <i class="fas fa-calendar-alt text-blue-500 mx-1"></i>
-                                                                                                                                        `;
+                                                                                                                                                            <button type="button" class="text-red-500 hover:text-red-700 mx-1 btn_eliminar_cal" data-index="${index}" title="Eliminar">
+                                                                                                                                                                <i class="fas fa-trash-alt"></i>
+                                                                                                                                                            </button>
+                                                                                                                                                            <i class="fas fa-calendar-alt text-blue-500 mx-1"></i>
+                                                                                                                                                        `;
 
                     tr.appendChild(actionTd);
                     tr.innerHTML += `<td class="py-3 px-2">${item.tipo_fecha || item.tipo}</td>`;
@@ -1639,16 +1649,16 @@
                     tr.className = index % 2 === 0 ? 'bg-white border-b' : 'bg-gray-50 border-b';
 
                     tr.innerHTML = `
-                                                                                                                                            <td class="py-2 px-2 text-center">
-                                                                                                                                                <button type="button" class="text-red-500 hover:text-red-700 btn_eliminar_convenio" data-index="${index}" title="Eliminar">
-                                                                                                                                                    <i class="fas fa-trash-alt"></i>
-                                                                                                                                                </button>
-                                                                                                                                            </td>
-                                                                                                                                            <td class="py-2 px-2 text-gray-700">${item.tipo}</td>
-                                                                                                                                            <td class="py-2 px-2 text-gray-700">${item.numero}</td>
-                                                                                                                                            <td class="py-2 px-2 text-gray-700 uppercase text-left">${item.nombre}</td>
-                                                                                                                                            <td class="py-2 px-2 text-gray-700 text-xs text-left">${item.objeto ? item.objeto : '-'}</td>
-                                                                                                                                        `;
+                                                                                                                                                            <td class="py-2 px-2 text-center">
+                                                                                                                                                                <button type="button" class="text-red-500 hover:text-red-700 btn_eliminar_convenio" data-index="${index}" title="Eliminar">
+                                                                                                                                                                    <i class="fas fa-trash-alt"></i>
+                                                                                                                                                                </button>
+                                                                                                                                                            </td>
+                                                                                                                                                            <td class="py-2 px-2 text-gray-700">${item.tipo}</td>
+                                                                                                                                                            <td class="py-2 px-2 text-gray-700">${item.numero}</td>
+                                                                                                                                                            <td class="py-2 px-2 text-gray-700 uppercase text-left">${item.nombre}</td>
+                                                                                                                                                            <td class="py-2 px-2 text-gray-700 text-xs text-left">${item.objeto ? item.objeto : '-'}</td>
+                                                                                                                                                        `;
                     tbodyConvenios.appendChild(tr);
                 });
 
@@ -1853,30 +1863,30 @@
                     else if (item.tipo_pago === 'NO APLICA') iconPago = '<i class="fas fa-ban text-red-500 text-lg" title="NO APLICA"></i>';
 
                     tr.innerHTML = `
-                                                                                                                                            <td class="py-2 px-1 text-center">
-                                                                                                                                                <div class="flex flex-col items-center justify-center space-y-1">
-                                                                                                                                                    <button type="button" class="text-red-500 hover:text-red-700 btn_eliminar_instructor focus:outline-none" data-index="${index}" title="Eliminar">
-                                                                                                                                                        <i class="fas fa-trash-alt"></i>
-                                                                                                                                                    </button>
-                                                                                                                                                    <a href="/instructores/${item.instructor_id}" target="_blank" class="text-blue-500 hover:text-blue-700 focus:outline-none mt-1" title="Ver instructor">
-                                                                                                                                                        <i class="fas fa-eye"></i>
-                                                                                                                                                    </a>
-                                                                                                                                                </div>
-                                                                                                                                            </td>
-                                                                                                                                            <td class="py-2 px-1 font-bold">${item.instructor_id}</td>
-                                                                                                                                            <td class="py-2 px-1 uppercase">${item.nombre}</td>
-                                                                                                                                            <td class="py-2 px-1 uppercase">${item.apellido_paterno}</td>
-                                                                                                                                            <td class="py-2 px-1 uppercase">${item.apellido_materno}</td>
-                                                                                                                                            <td class="py-2 px-1 text-center">${iconTipo}</td>
-                                                                                                                                            <td class="py-2 px-1">${item.pago_instructor}</td>
-                                                                                                                                            <td class="py-2 px-1 text-xs">${formatearFecha(item.fecha_inicio)}</td>
-                                                                                                                                            <td class="py-2 px-1 text-xs">${formatearFecha(item.fecha_termino)}</td>
-                                                                                                                                            <td class="py-2 px-1">${item.duracion_horas}</td>
-                                                                                                                                            <td class="py-2 px-1">${item.duracion_dias}</td>
-                                                                                                                                            <td class="py-2 px-1 text-xs uppercase max-w-[120px] truncate" title="${item.horario}">${item.horario}</td>
-                                                                                                                                            <td class="py-2 px-1 text-xs">${formatearFecha(item.fecha_pago)}</td>
-                                                                                                                                            <td class="py-2 px-1 text-center">${iconPago}</td>
-                                                                                                                                        `;
+                                                                                                                                                            <td class="py-2 px-1 text-center">
+                                                                                                                                                                <div class="flex flex-col items-center justify-center space-y-1">
+                                                                                                                                                                    <button type="button" class="text-red-500 hover:text-red-700 btn_eliminar_instructor focus:outline-none" data-index="${index}" title="Eliminar">
+                                                                                                                                                                        <i class="fas fa-trash-alt"></i>
+                                                                                                                                                                    </button>
+                                                                                                                                                                    <a href="/instructores/${item.instructor_id}" target="_blank" class="text-blue-500 hover:text-blue-700 focus:outline-none mt-1" title="Ver instructor">
+                                                                                                                                                                        <i class="fas fa-eye"></i>
+                                                                                                                                                                    </a>
+                                                                                                                                                                </div>
+                                                                                                                                                            </td>
+                                                                                                                                                            <td class="py-2 px-1 font-bold">${item.instructor_id}</td>
+                                                                                                                                                            <td class="py-2 px-1 uppercase">${item.nombre}</td>
+                                                                                                                                                            <td class="py-2 px-1 uppercase">${item.apellido_paterno}</td>
+                                                                                                                                                            <td class="py-2 px-1 uppercase">${item.apellido_materno}</td>
+                                                                                                                                                            <td class="py-2 px-1 text-center">${iconTipo}</td>
+                                                                                                                                                            <td class="py-2 px-1">${item.pago_instructor}</td>
+                                                                                                                                                            <td class="py-2 px-1 text-xs">${formatearFecha(item.fecha_inicio)}</td>
+                                                                                                                                                            <td class="py-2 px-1 text-xs">${formatearFecha(item.fecha_termino)}</td>
+                                                                                                                                                            <td class="py-2 px-1">${item.duracion_horas}</td>
+                                                                                                                                                            <td class="py-2 px-1">${item.duracion_dias}</td>
+                                                                                                                                                            <td class="py-2 px-1 text-xs uppercase max-w-[120px] truncate" title="${item.horario}">${item.horario}</td>
+                                                                                                                                                            <td class="py-2 px-1 text-xs">${formatearFecha(item.fecha_pago)}</td>
+                                                                                                                                                            <td class="py-2 px-1 text-center">${iconPago}</td>
+                                                                                                                                                        `;
                     tbodyInstructores.appendChild(tr);
                 });
 
