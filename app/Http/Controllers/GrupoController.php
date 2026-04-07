@@ -350,7 +350,7 @@ class GrupoController extends Controller
 
     public function agregarAlumnos(Grupo $grupo)
     {
-        $grupo->load(['plantel.user', 'curso', 'cursoIcategro', 'ofertaEducativa', 'campoFormacion', 'especialidadOcupacional', 'listaAlumnos.student']);
+        $grupo->load(['creador', 'plantel.usuarioEncargado', 'plantel.user', 'curso', 'cursoIcategro', 'ofertaEducativa', 'campoFormacion', 'especialidadOcupacional', 'listaAlumnos.student']);
         return view('grupos.agregar_alumnos', compact('grupo'));
     }
 
@@ -384,16 +384,22 @@ class GrupoController extends Controller
         $registro = new \App\Models\ListaCursoAlumno();
         $registro->student_id = $alumno->id;
         $registro->group_id = $grupo->id;
-        $registro->plantel = $grupo->plantel->name ?? null;
 
-        // Nombre del curso (CAE vs Extension)
-        if ($grupo->tipo_servicio === 'CAE' && $grupo->curso) {
-            $registro->name = $grupo->curso->name;
-        } elseif ($grupo->tipo_servicio === 'Extensión' && $grupo->cursoIcategro) {
-            $registro->name = $grupo->cursoIcategro->name;
-        } else {
-            $registro->name = 'CURSO NO ASIGNADO';
+        // 1. Obtenemos el ID del curso que realmente corresponde al grupo
+        $idDelCurso = $grupo->curso_id_especifico;
+
+        // 2. Validación: Si no hay ningún ID (ni CAE ni Extensión), detenemos el proceso
+        if (!$idDelCurso) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se puede inscribir: Este grupo no tiene un curso vinculado (CAE o Extensión).'
+            ], 422);
         }
+
+        // ASIGNACIÓN CLAVE: Guardamos el ID que obtuvimos del Accessor
+        $registro->curso_id = $idDelCurso;
+
+        //$registro->name = $grupo->nombre_curso;
 
         $registro->start_date = $grupo->fecha_inicio;
         $registro->end_date = $grupo->fecha_termino;

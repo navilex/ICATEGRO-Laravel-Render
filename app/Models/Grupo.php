@@ -113,4 +113,30 @@ class Grupo extends Model
     {
         return $this->hasMany(ListaCursoAlumno::class, 'group_id');
     }
+
+    public function getNombreCursoAttribute()
+    {
+        if ($this->tipo_servicio === 'CAE' && $this->curso) {
+            return $this->curso->name;
+        }
+
+        if ($this->tipo_servicio === 'Extensión' && $this->cursoIcategro) {
+            return $this->cursoIcategro->name;
+        }
+
+        return 'CURSO NO ASIGNADO';
+    }
+
+    public function getCursoIdEspecificoAttribute()
+    {
+        if ($this->tipo_servicio === 'CAE') {
+            return $this->curso->id;
+        }
+
+        if ($this->tipo_servicio === 'Extensión') {
+            return $this->cursoIcategro->id;
+        }
+
+        return null;
+    }
 }

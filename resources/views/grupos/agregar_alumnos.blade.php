@@ -184,7 +184,7 @@
                                 <tr class="bg-white border-b border-gray-200 hover:bg-gray-50">
                                     <td class="py-3 px-2 flex justify-start items-center space-x-3 whitespace-nowrap">
                                         {{-- El bote de basura se muestra si no cuenta con calificacion y no cuenta con estatus --}}
-                                        @if(empty($ins->grade) && empty($ins->student_status))
+                                        @if(empty($ins->calificacion) && empty($ins->student_status))
                                             <form action="#" method="POST" class="inline m-0">
                                                 @csrf
                                                 @method('DELETE')

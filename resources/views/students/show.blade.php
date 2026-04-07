@@ -277,7 +277,7 @@
                                 @php
                                     // Map Group Status to color
                                     $statusColor = 'bg-gray-300';
-                                    switch (strtoupper($curso->group_status)) {
+                                    switch (strtoupper($curso->grupo->estatus)) {
                                         case 'PENDIENTE':
                                             $statusColor = 'bg-yellow-400';
                                             break;
@@ -298,6 +298,9 @@
                                             break;
                                         case 'CANCELADO':
                                             $statusColor = 'bg-gray-500';
+                                            break;
+                                        default:
+                                            $statusColor = 'bg-black';
                                             break;
                                     }
 
@@ -339,10 +342,10 @@
                                     <td class="px-2 py-3 text-center">
                                         <span class="inline-block w-4 h-4 rounded-full {{ $statusColor }}"></span>
                                     </td>
-                                    <td class="px-2 py-3 uppercase">{{ $curso->plantel }}</td>
+                                    <td class="px-2 py-3 uppercase">{{ $curso->grupo->plantel->name ?? 'N/A' }}</td>
                                     <td class="px-2 py-3">{{ $curso->group_id }}</td>
                                     <td class="px-2 py-3 uppercase text-blue-600 font-semibold cursor-pointer hover:underline">
-                                        <i class="fas fa-eye mr-1"></i> {{ $curso->name }}
+                                        <i class="fas fa-eye mr-1"></i> {{ $curso->curso->name ?? 'N/A' }}
                                     </td>
                                     <td class="px-2 py-3">
                                         {{ $curso->start_date ? \Carbon\Carbon::parse($curso->start_date)->format('d/m/Y') : '' }}
@@ -351,8 +354,8 @@
                                         {{ $curso->end_date ? \Carbon\Carbon::parse($curso->end_date)->format('d/m/Y') : '' }}
                                     </td>
                                     <td class="px-2 py-3 text-center">{!! $studentStatusIcon !!}</td>
-                                    <td class="px-2 py-3">{{ $curso->grade ?? '-' }}</td>
-                                    <td class="px-2 py-3 text-center">{!! $docTypeIcon !!}</td>
+                                    <td class="px-2 py-3">{{ $curso->calificacion ?? '-' }}</td>
+                                    <td class="px-2 py-3 text-center">{{ $curso->doc_type ?? '-' }}</td>
                                     <td class="px-2 py-3">{{ $curso->folio ?? 'PENDIENTE' }}</td>
                                 </tr>
                             @empty
