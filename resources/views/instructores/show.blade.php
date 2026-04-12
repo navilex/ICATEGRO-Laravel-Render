@@ -944,22 +944,55 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <!-- Placeholder data matching the provided image -->
-                        <tr class="bg-gray-100 border-b hover:bg-gray-200">
-                            <td class="px-4 py-3 text-center">
-                                <span class="w-4 h-4 rounded-full bg-green-500 inline-block shadow"></span>
-                            </td>
-                            <td class="px-4 py-3 uppercase">OMETEPEC</td>
-                            <td class="px-4 py-3">12</td>
-                            <td class="px-4 py-3 uppercase text-blue-600 font-semibold"><i class="fas fa-eye mr-1"></i>
-                                ESTÉ... AUTOM...</td>
-                            <td class="px-4 py-3">01/08/2023</td>
-                            <td class="px-4 py-3">02/12/2023</td>
-                            <td class="px-4 py-3">20</td>
-                            <td class="px-4 py-3">50</td>
-                            <td class="px-4 py-3 uppercase">SIN PAGO AL<br>INSTRUCTOR</td>
-                            <td class="px-4 py-3">0.0</td>
-                        </tr>
+                        @forelse($instructor->grupos as $grupo)
+                            <tr class="bg-gray-100 border-b hover:bg-gray-200">
+                                <td class="px-4 py-3 text-center">
+                                    @php
+                                        $color = 'gray-500'; // Default CANCELADO
+                                        switch ($grupo->estatus) {
+                                            case 'PENDIENTE':
+                                                $color = 'yellow-500';
+                                                break;
+                                            case 'RECHAZADO':
+                                                $color = 'red-600';
+                                                break;
+                                            case 'AUTORIZADO':
+                                                $color = 'green-500';
+                                                break;
+                                            case 'PROCESO':
+                                                $color = 'blue-500';
+                                                break;
+                                            case 'CALIFICADO':
+                                                $color = 'fuchsia-500';
+                                                break;
+                                            case 'CONCLUIDO':
+                                                $color = 'purple-700';
+                                                break;
+                                        }
+                                    @endphp
+                                    <span class="w-4 h-4 rounded-full bg-{{ $color }} inline-block shadow"
+                                        title="{{ $grupo->estatus }}"></span>
+                                </td>
+                                <td class="px-4 py-3 uppercase">{{ $grupo->plantel ? $grupo->plantel->name : 'N/A' }}</td>
+                                <td class="px-4 py-3">{{ $grupo->id }}</td>
+                                <td class="px-4 py-3 uppercase text-blue-600 font-semibold truncate max-w-xs">
+                                    <a href="{{ route('grupos.show', $grupo->id) }}" class="hover:underline">
+                                        <i class="fas fa-eye mr-1"></i> {{ $grupo->nombre_curso }}
+                                    </a>
+                                </td>
+                                <td class="px-4 py-3">{{ \Carbon\Carbon::parse($grupo->fecha_inicio)->format('d/m/Y') }}</td>
+                                <td class="px-4 py-3">{{ \Carbon\Carbon::parse($grupo->fecha_termino)->format('d/m/Y') }}</td>
+                                <td class="px-4 py-3">{{ $grupo->duracion_dias }}</td>
+                                <td class="px-4 py-3">{{ $grupo->duracion_horas }}</td>
+                                <td class="px-4 py-3 uppercase">{!! nl2br(e($grupo->pivot->tipo_pago ?? 'N/A')) !!}</td>
+                                <td class="px-4 py-3">{{ number_format($grupo->pivot->pago_instructor ?? 0, 2) }}</td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="10" class="px-4 py-4 text-center text-gray-500 italic">No hay grupos asociados
+                                    para este instructor.</td>
+                            </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
@@ -983,7 +1016,7 @@
                     <label class="block text-[#9b2242] font-bold mb-1 ml-2">ID usuario capturó</label>
                     <div
                         class="w-full border-2 border-gray-600 rounded-full px-4 py-1.5 font-bold text-gray-900 bg-white shadow-sm focus:outline-none focus:ring-0 text-sm">
-                        1
+                        {{ $instructor->user_id ?? 'N/A' }}
                     </div>
                 </div>
 
@@ -992,7 +1025,7 @@
                     <label class="block text-[#9b2242] font-bold mb-1 ml-2">Registrado por</label>
                     <div
                         class="w-full border-2 border-gray-600 rounded-full px-4 py-1.5 font-bold text-gray-900 bg-white uppercase shadow-sm focus:outline-none focus:ring-0 text-sm">
-                        CARLOS RODRIGO NEGRETE MERAZ
+                        {{ $instructor->creator->name ?? 'N/A' }}
                     </div>
                 </div>
 
@@ -1001,7 +1034,7 @@
                     <label class="block text-[#9b2242] font-bold mb-1 ml-2">Fecha captura</label>
                     <div
                         class="w-full border-2 border-gray-600 rounded-full px-4 py-1.5 font-bold text-gray-900 bg-white uppercase shadow-sm focus:outline-none focus:ring-0 text-sm">
-                        18/04/2023 13:48:40
+                        {{ $instructor->created_at ? $instructor->created_at->format('d/m/Y H:i:s') : 'N/A' }}
                     </div>
                 </div>
 
@@ -1010,7 +1043,7 @@
                     <label class="block text-[#9b2242] font-bold mb-1 ml-2">Plantel</label>
                     <div
                         class="w-full border-2 border-gray-600 rounded-full px-4 py-1.5 font-bold text-gray-900 bg-white uppercase shadow-sm focus:outline-none focus:ring-0 text-sm">
-                        DIRECCION GENERAL DIRECCION GENERAL
+                        {{ $instructor->creator->plantel->name ?? 'N/A' }}
                     </div>
                 </div>
             </div>

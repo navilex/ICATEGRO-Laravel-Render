@@ -56,13 +56,8 @@ class Instructor extends Model
         'archivo_cv',
         'archivo_solicitud_empleo',
         'observaciones',
-        'plantel_id',
+        'user_id'
     ];
-
-    public function plantel()
-    {
-        return $this->belongsTo(Plantel::class);
-    }
 
     public function idiomas()
     {
@@ -84,5 +79,10 @@ class Instructor extends Model
         return $this->belongsToMany(Grupo::class, 'grupo_instructor')
             ->withPivot(['tipo', 'fecha_inicio', 'fecha_termino', 'duracion_dias', 'duracion_horas', 'horario', 'pago_instructor', 'fecha_pago', 'tipo_pago'])
             ->withTimestamps();
+    }
+
+    public function creator()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 }

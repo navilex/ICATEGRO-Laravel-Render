@@ -45,6 +45,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/instructores/create', [\App\Http\Controllers\InstructorController::class, 'create'])->name('instructores.create');
     Route::post('/instructores', [\App\Http\Controllers\InstructorController::class, 'store'])->name('instructores.store');
     Route::get('/instructores/check-curp/{curp}', [\App\Http\Controllers\InstructorController::class, 'checkCurp'])->name('instructores.check-curp');
+    Route::get('/instructores/{instructor}', [\App\Http\Controllers\InstructorController::class, 'show'])->name('instructores.show');
     Route::get('/instructores/{instructor}/download/{type}', [\App\Http\Controllers\InstructorController::class, 'download'])->name('instructores.download');
     Route::get('/api/instructores/search', [\App\Http\Controllers\InstructorController::class, 'search'])->name('api.instructores.search');
 
@@ -111,6 +112,10 @@ Route::middleware('auth')->group(function () {
     Route::get('/api/grupos/campos-formacion/{ofertaId}', [\App\Http\Controllers\GrupoController::class, 'getCamposFormacion']);
     Route::get('/api/grupos/especialidades/{campoId}', [\App\Http\Controllers\GrupoController::class, 'getEspecialidades']);
     Route::get('/api/grupos/cursos/{especialidadId}/{tipo}', [\App\Http\Controllers\GrupoController::class, 'getCursos']);
+
+    // Reportes Routes
+    Route::get('/reportes/alumnos-grupos', [\App\Http\Controllers\ReporteController::class, 'alumnosGrupos'])->name('reportes.alumnos-grupos');
+    Route::post('/reportes/alumnos-grupos/generar', [\App\Http\Controllers\ReporteExcelController::class, 'generarReporte'])->name('reportes.alumnos-grupos.generar');
 
     // Consultar Planteles Routes
     Route::get('/consulta-planteles', [\App\Http\Controllers\ConsultaPlantelController::class, 'index'])->name('consulta-planteles.index');

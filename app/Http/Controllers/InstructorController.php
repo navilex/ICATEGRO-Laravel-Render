@@ -225,6 +225,7 @@ class InstructorController extends Controller
     }
     public function show(\App\Models\Instructor $instructor)
     {
+        $instructor->load(['creator']);
         return view('instructores.show', compact('instructor'));
     }
 

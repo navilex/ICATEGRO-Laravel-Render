@@ -307,14 +307,14 @@
                     <table class="w-full text-sm text-center">
                         <thead class="bg-gray-100 text-gray-700 font-bold border-b border-gray-300">
                             <tr>
+                                <th class="py-2 px-2">Opciones</th>
                                 <th class="py-2 px-2">Tipo</th>
                                 <th class="py-2 px-2">Fecha inicial</th>
                                 <th class="py-2 px-2">Fecha final</th>
                                 <th class="py-2 px-2">Hora inicial</th>
                                 <th class="py-2 px-2">Hora final</th>
                                 <th class="py-2 px-2">Total días</th>
-                                <th class="py-2 px-2">Total horas</th>
-                                <th class="py-2 px-2 text-center"></th>
+                                <th class="py-2 px-2 text-center">Total horas</th>
                             </tr>
                         </thead>
                         <tbody id="calendario_tbody">

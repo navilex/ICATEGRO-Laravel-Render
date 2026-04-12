@@ -131,8 +131,17 @@
                                 de usuarios</a>
                         </div>
                     </div>
-                    <a href="#"
-                        class="px-2 py-2 text-sm font-bold rounded hover:bg-red-700 transition whitespace-nowrap">Reportes</a>
+                    <div class="relative group">
+                        <button type="button"
+                            class="px-2 py-2 text-sm font-bold rounded hover:bg-red-700 transition flex items-center focus:outline-none whitespace-nowrap">
+                            Reportes <i class="fas fa-caret-down ml-1 text-xs"></i>
+                        </button>
+                        <div
+                            class="absolute left-0 mt-1 w-48 bg-white rounded shadow-lg hidden group-hover:block z-50 border border-gray-200">
+                            <a href="{{ route('reportes.alumnos-grupos') }}"
+                                class="block px-4 py-2 text-sm text-gray-800 hover:bg-red-800 hover:text-white font-semibold transition">Alumnos en Grupos</a>
+                        </div>
+                    </div>
                     <div class="relative group">
                         <button type="button"
                             class="px-2 py-2 text-sm font-bold rounded hover:bg-red-700 transition flex items-center focus:outline-none whitespace-nowrap">
