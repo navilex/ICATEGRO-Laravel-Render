@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: icategro-laravel
+    env: php
+    plan: free
+    buildCommand: ./build.sh
+    startCommand: php artisan serve --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: APP_KEY
+        sync: false # Esto permite que luego la pongas manual en el dashboard
+      - key: APP_DEBUG
+        value: false
+      - key: LOG_CHANNEL
+        value: stderr
