@@ -20,6 +20,6 @@ services:
       - key: DB_DATABASE
         value: defaultdb
       - key: DB_USERNAME
-        sync: avnadmin # Configúralo en el dashboard de Render
+        value: avnadmin # Configúralo en el dashboard de Render
       - key: DB_PASSWORD
         sync: false # Configúralo en el dashboard de Render
