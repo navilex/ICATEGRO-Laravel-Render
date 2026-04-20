@@ -1,14 +1,25 @@
 services:
   - type: web
     name: icategro-laravel
-    env: php
+    env: docker
     plan: free
-    buildCommand: ./build.sh
-    startCommand: php artisan serve --host 0.0.0.0 --port $PORT
+    region: ohio 
     envVars:
       - key: APP_KEY
-        sync: false # Esto permite que luego la pongas manual en el dashboard
+        sync: false # Recuerda pegarla manualmente en el panel de Render
       - key: APP_DEBUG
         value: false
       - key: LOG_CHANNEL
         value: stderr
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        sync: false # Es mejor ponerlo manual para no exponer la URL en GitHub
+      - key: DB_PORT
+        value: "19995"
+      - key: DB_DATABASE
+        value: defaultdb
+      - key: DB_USERNAME
+        sync: avnadmin # Configúralo en el dashboard de Render
+      - key: DB_PASSWORD
+        sync: false # Configúralo en el dashboard de Render
