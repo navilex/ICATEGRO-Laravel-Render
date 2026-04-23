@@ -4,15 +4,23 @@ FROM php:8.2-apache
 # 2. Instalamos herramientas necesarias del sistema (Git, Zip, etc.)
 RUN apt-get update && apt-get install -y \
     libpng-dev \
+    libjpeg-dev \
+    libfreetype6-dev \
     libonig-dev \
     libxml2-dev \
+    libzip-dev \
+    libicu-dev \
     zip \
     unzip \
     git \
     curl
 
+# Limpiamos la caché de apt para que la imagen no pese tanto
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
 # 3. Instalamos las extensiones de PHP que Laravel necesita para funcionar
-RUN docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd intl zip
 
 # 4. Activamos el "mod_rewrite" de Apache (necesario para las rutas de Laravel)
 RUN a2enmod rewrite
@@ -27,10 +35,11 @@ WORKDIR /var/www/html
 COPY . .
 
 # 8. Instalamos las dependencias de PHP (sin las de desarrollo para que pese menos)
-RUN composer install --no-dev --optimize-autoloader
+RUN composer install --no-dev --optimize-autoloader --ignore-platform-reqs
 
 # 9. Damos permisos a Laravel para que pueda escribir en sus carpetas de logs y caché
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # 10. Configuramos Apache para que su "punto de entrada" sea la carpeta /public de Laravel
 ENV APACHE_DOCUMENT_ROOT /var/www/html/public
